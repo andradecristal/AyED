@@ -8,41 +8,51 @@ public class ParcialArboles {
 		this.arbol = arbol;
 	}
 	
-	private int left(BinaryTree<Integer> arbol) {
-		int cont=0;
-		if ((arbol.hasRightChild()) & !(arbol.hasLeftChild())) 
-			cont += 1 + this.left(arbol.getRightChild()); 
-		if (arbol.hasLeftChild() & !(arbol.hasRightChild()))
-			cont += 1 + this.left(arbol.getLeftChild());
-		return cont;
-	}
-	
-	private boolean tree(BinaryTree<Integer> arbol, int num) {
-		if(arbol.getData()==num) {
-			int iz;
-			int de;
-			if(arbol.hasLeftChild())
-				iz=this.left(arbol.getLeftChild());
-			else
-				iz=-1;
-			if(arbol.hasRightChild())
-				de=this.left(arbol.getRightChild());
-			else
-				de=-1;
-			return (iz>de) ? true : false;	
+	private int contarHojas(BinaryTree<Integer> arbol) {
+		int contador=0;
+		if(!arbol.isLeaf()) {
+			if((arbol.hasLeftChild()) && (!arbol.hasRightChild()))
+				contador = 1 + this.contarHojas(arbol.getLeftChild());
+			else {
+				if((!arbol.hasRightChild()) && (arbol.hasLeftChild()))
+					contador = 1 +this.contarHojas(arbol.getRightChild());
+			}
+	            contador = 0 + contarHojas(arbol.getLeftChild()) + 
+	            		contarHojas(arbol.getRightChild());
 		}
-		boolean esta=false;
-		if((arbol.hasLeftChild()) && !(arbol.hasRightChild()))
-			esta= this.tree(arbol.getLeftChild(), num);
-		if((arbol.hasRightChild()) && !(arbol.hasLeftChild()))
-			esta= this.tree(arbol.getRightChild(), num);
-		return esta;
-		
+		return contador;
 	}
-	
+
+	private BinaryTree<Integer> buscar(BinaryTree<Integer> arbol, int num) {
+		BinaryTree<Integer> nuevo = null;
+		if(arbol.getData().equals(num)) {
+			nuevo=arbol;
+		}
+		else {
+			if((arbol.hasLeftChild()) && (nuevo == null))
+				nuevo=buscar(arbol.getLeftChild(),num);
+			if((arbol.hasRightChild()) && (nuevo == null))
+				nuevo=buscar(arbol.getLeftChild(),num);
+		}
+		return nuevo;
+	}
+
 	public boolean isLeftTree (int num) {
-		if((this.arbol==null) && (this.arbol.isEmpty())) return false;
-		else return tree(this.arbol,num);
-		
+		boolean hojas=false;
+		if((arbol!=null) && (!arbol.isEmpty())) {
+			BinaryTree<Integer> nuevo = null;
+			nuevo=this.buscar(arbol,9);
+			if(nuevo != null) {
+				if(nuevo.hasLeftChild()) {
+					int izquierda=this.contarHojas(nuevo.getLeftChild());
+					int derecha=-1;
+					if(nuevo.hasRightChild())
+						derecha=this.contarHojas(nuevo.getRightChild());
+					if(izquierda>derecha)
+						hojas=true;
+				}
+			}
+		}
+		return hojas;	
 	}
 }
